@@ -82,8 +82,3 @@ Replace `{requestId}` with the one from your API response:
 docker exec -it demo-goal-redis-1 redis-cli GET demo:req:{requestId}
 ```
 
-## V. Technical Features
-- **ESM Support**: Running natively as ECMAScript Modules using `tsx`.
-- **Atomic Lock Release**: Uses a Lua script to ensure only the owner of a lock can release it.
-- **Reliable Networking**: Configured with `KAFKA_ADVERTISED_LISTENERS` for host-to-container communication.
-- **Idempotency**: MySQL unique constraints and Redis mapping prevent duplicate processing.
