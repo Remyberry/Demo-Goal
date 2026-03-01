@@ -43,7 +43,7 @@ async function setup() {
             console.log(`[${requestId}] Message received for bizKey: ${bizKey}`);
 
             try {
-                // 1. Write to MySQL (Idempotent)
+                // Write to MySQL
                 let mysqlDataId: number;
                 try {
                     const [result]: any = await db.execute(
@@ -66,14 +66,13 @@ async function setup() {
                     }
                 }
 
-                // 2. Write to Redis (Option 1: demo:req:{requestId} -> mysqlDataId)
+                // Write to Redis 
                 const redisKey = `demo:req:${requestId}`;
                 await redis.set(redisKey, mysqlDataId);
                 console.log(`[${requestId}] Redis write success: ${redisKey} -> ${mysqlDataId}`);
 
             } catch (error) {
                 console.error(`[${requestId}] Consumer processing error:`, error);
-                // In a real scenario, you might want to retry or send to a dead-letter queue
             }
         },
     });

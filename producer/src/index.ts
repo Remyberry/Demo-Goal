@@ -37,12 +37,12 @@ app.post('/demo/send', async (req, res) => {
     const requestId = providedId || uuidv4();
     const lockKey = `lock:kafka:send:${bizKey}`;
     const lockValue = requestId;
-    const ttl = 10000; // 10 seconds
+    const ttl = 10000;
 
     console.log(`[${requestId}] Request received for bizKey: ${bizKey}`);
 
     try {
-        // 1. Acquire Redis distributed lock
+        // Acquire Redis distributed lock
         const acquired = await redis.set(lockKey, lockValue, 'PX', ttl, 'NX');
 
         if (!acquired) {
@@ -52,7 +52,7 @@ app.post('/demo/send', async (req, res) => {
 
         console.log(`[${requestId}] Lock acquired for bizKey: ${bizKey}`);
 
-        // 2. Send Kafka message
+        // Send Kafka message
         const message = {
             requestId,
             bizKey,
@@ -69,7 +69,7 @@ app.post('/demo/send', async (req, res) => {
 
         console.log(`[${requestId}] Kafka message sent successfully`);
 
-        // 3. Release lock (using Lua script to ensure atomicity)
+        // Release lock
         const luaScript = `
             if redis.call("get", KEYS[1]) == ARGV[1] then
                 return redis.call("del", KEYS[1])
