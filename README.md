@@ -11,7 +11,7 @@ This project implements a complete end-to-end distributed system link:
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Remyberry/Demo-Goal.git
 cd Demo-Goal
 ```
 
