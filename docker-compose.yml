@@ -17,7 +17,6 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
     depends_on:
       - zookeeper
-
     healthcheck:
       test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list"]
       interval: 10s
@@ -48,3 +47,30 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  producer:
+    image: remyberry/demo-goal-producer:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - REDIS_HOST=redis
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  consumer:
+    image: remyberry/demo-goal-consumer:latest
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - REDIS_HOST=redis
+      - MYSQL_HOST=mysql
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy

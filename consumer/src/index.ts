@@ -4,16 +4,16 @@ import { Redis } from 'ioredis';
 
 const kafka = new Kafka({
     clientId: 'demo-consumer',
-    brokers: ['localhost:9092'],
+    brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
 });
 
 const redis = new Redis({
-    host: 'localhost',
+    host: process.env.REDIS_HOST || 'localhost',
     port: 6379,
 });
 
 const mysqlConfig = {
-    host: 'localhost',
+    host: process.env.MYSQL_HOST || 'localhost',
     user: 'root',
     password: 'rootpassword',
     database: 'demo_db',

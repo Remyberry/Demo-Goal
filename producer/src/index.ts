@@ -7,13 +7,13 @@ const app = express();
 app.use(express.json());
 
 const redis = new Redis({
-    host: 'localhost',
+    host: process.env.REDIS_HOST || 'localhost',
     port: 6379,
 });
 
 const kafka = new Kafka({
     clientId: 'demo-producer',
-    brokers: ['localhost:9092'],
+    brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
 });
 
 const producer = kafka.producer();
