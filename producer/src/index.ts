@@ -43,7 +43,7 @@ app.post('/demo/send', async (req, res) => {
 
     try {
         // 1. Acquire Redis distributed lock
-        const acquired = await redis.set(lockKey, lockValue, 'NX', 'PX', ttl);
+        const acquired = await redis.set(lockKey, lockValue, 'PX', ttl, 'NX');
 
         if (!acquired) {
             console.log(`[${requestId}] Lock acquisition failed for bizKey: ${bizKey}`);
