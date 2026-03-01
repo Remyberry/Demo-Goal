@@ -53,7 +53,7 @@ npm run dev
 curl -X POST http://localhost:3000/demo/send -H "Content-Type: application/json" -d "{\"bizKey\": \"order123\", \"payload\": {\"status\": \"test\"}}"
 ```
 
-### 2. Test Distributed Lock
+### 2. Test Distributed Lock (Concurrency)
 Run two requests at the **exact same time** (using `&` in CMD/Bash):
 ```bash
 curl -X POST http://localhost:3000/demo/send -H "Content-Type: application/json" -d "{\"bizKey\": \"lock-test\"}" & curl -X POST http://localhost:3000/demo/send -H "Content-Type: application/json" -d "{\"bizKey\": \"lock-test\"}"
