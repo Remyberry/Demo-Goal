@@ -1,0 +1,16 @@
+
+I've implemented the API-Kafka-MySQL-Redis demo, complete with infrastructure setup, database schema, producer and consumer logic, and clear instructions.
+Deliverables:
+1. `docker-compose.yml`: Configures Kafka, Zookeeper, MySQL, and Redis.
+2. `init.sql: Initializes the demo_db and demo_records table with a unique request_id for idempotency. 3. Producer Service (producer/`):
+* Distributed Lock: Uses Redis SET NX PX to ensure only one thread sends per bizkey.
+* Kafka Producer: Generates a requestId and sends the message to demo-topic.
+Logging: Records request receipt, lock status, and Kafka results.
+4. Consumer Service (consumer/`):
+*
+Idempotent Consumption: Handles ER_DUP_ENTRY to prevent duplicate MySQL inserts.
+MySQL Storage: Saves request_id, biz_key, and payload.
+* Redis Mapping: Stores the mapping of requestId to mysql_data_id.
+5. README.md : Provides step-by-step startup instructions and a curl example for validation.
+To start the demo, run docker-compose up -d in the root, then npm run dev in both the producer and consumer directories.
+

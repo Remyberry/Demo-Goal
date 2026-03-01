@@ -1,0 +1,102 @@
+Objective: API → Kafka → MySQL → Redis Demo Link Practice Guide
+
+I. Overall Objective
+Build a complete end-to-end demo link to become familiar with common department technical components and system interaction patterns.
+
+Link flow:
+1. Call the Demo HTTP API
+2. Producer service receives the request
+3. Use a Redis distributed lock to control sending
+4. Send a message to Kafka
+5. Return the API response: sent successfully
+6. Consumer service consumes the Kafka message
+7. Store to MySQL
+8. Write the MySQL data ID into Redis
+
+II. Service Structure and Responsibilities
+1. Demo Producer (HTTP + Kafka Producer)
+Responsibilities:
+- Provide HTTP API POST /demo/send
+- Validate parameters and generate requestId
+- Use Redis distributed lock
+- Send Kafka message
+- Return success response
+
+2. Demo Consumer (Kafka Consumer + MySQL + Redis)
+Responsibilities:
+- Subscribe to Kafka Topic
+- Consume messages
+- Write to MySQL
+- Obtain mysql_data_id
+- Write mysql_data_id to Redis to build a mapping
+
+III. Distributed Lock Design Requirements
+Objective:
+Ensure that for the same bizKey only one thread can send to Kafka at a time.
+
+Suggested lock key:
+lock:kafka:send:{bizKey}
+
+Implementation (choose one of three):
+1. SETNX + expiration time
+2. Lua script to release the lock
+3. Redisson component
+
+Notes:
+- The lock must have a TTL
+- Releasing the lock must verify the value
+- If lock acquisition fails, return busy or retry
+
+IV. Kafka Consumer Idempotency Design (Recommended)
+Reason: Kafka may deliver duplicate messages.
+
+Approach:
+- Add a unique index on request_id in the MySQL table
+- On insert conflict, query existing record
+- Prevent duplicate writes
+
+V. MySQL and Redis Design Suggestions
+MySQL table fields (suggested):
+- id (primary key)
+- request_id (unique)
+- biz_key
+- payload
+- created_at
+
+Redis storage options:
+Option 1:
+Key: demo:req:{requestId}
+Value: mysql_data_id
+
+Option 2:
+Key: demo:biz:{bizKey}
+Field: requestId
+Value: mysql_data_id
+
+VI. Logging and Observability Requirements
+Producer logs:
+- Request received
+- Lock acquired success/failure
+- Kafka send result
+
+Consumer logs:
+- Message received
+- MySQL insert success
+- Redis write success
+
+All logs must include requestId and bizKey.
+
+VII. Deliverables
+Must provide:
+- README startup instructions
+- Producer service code
+- Consumer service code
+- Database table creation SQL
+- API call example
+
+VIII. Acceptance Criteria
+1. Under concurrent same bizKey, only one thread sends to Kafka
+2. Kafka message successfully consumed
+3. MySQL successfully inserts and generates ID
+4. Redis successfully writes the mapping
+5. Duplicate messages do not insert duplicates (idempotent)
