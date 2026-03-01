@@ -50,7 +50,7 @@ npm run dev
 
 ### 1. Basic Send 
 ```bash
-curl -X POST http://localhost:3000/demo/send -H "Content-Type: application/json" -d "{\"bizKey\": \"order123\", \"payload\": {\"item\": \"laptop\", \"price\": 999}}"
+curl -X POST http://localhost:3000/demo/send -H "Content-Type: application/json" -d "{\"bizKey\": \"order123\", \"payload\": {\"status\": \"test\"}}"
 ```
 
 ### 2. Test Distributed Lock
